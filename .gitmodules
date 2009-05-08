@@ -10,3 +10,21 @@
 [submodule "sites/all/modules/simple_geo"]
 	path = sites/all/modules/simple_geo
 	url = git://github.com/hugowetterberg/simple_geo.git
+[submodule "sites/default/modules/services_oop"]
+	path = sites/default/modules/services_oop
+	url = git://github.com/hugowetterberg/services_oop.git
+[submodule "sites/default/modules/services"]
+	path = sites/default/modules/services
+	url = git://github.com/hugowetterberg/services.git
+[submodule "sites/default/modules/services_oauth"]
+	path = sites/default/modules/services_oauth
+	url = git://github.com/hugowetterberg/services_oauth.git
+[submodule "sites/default/modules/oauth_common"]
+	path = sites/default/modules/oauth_common
+	url = git://github.com/hugowetterberg/oauth_common.git
+[submodule "sites/default/modules/rest_server"]
+	path = sites/default/modules/rest_server
+	url = git://github.com/hugowetterberg/rest_server.git
+[submodule "sites/default/modules/query_builder"]
+	path = sites/default/modules/query_builder
+	url = git://github.com/hugowetterberg/query_builder.git
