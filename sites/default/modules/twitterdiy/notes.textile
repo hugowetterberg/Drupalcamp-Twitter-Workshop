@@ -1,0 +1,14 @@
+* Remove page and story content types
+* Enable the views, pathauto and twitterdiy modules
+* Add a view that overrides user/1
+** HTML list with row style Node/teaser, no links
+** Single argument user uid, title: %1, default 404
+** Sort criteria: post date desc
+** Filter: type is tweet & node published
+** Add page display
+*** Path: user/%
+* Enable the frontpage view
+** HTML list with row style Node/teaser, no links
+** Remove superfluous stuff (sticky, promote)
+** Filter out non-tweets
+* Create a twitterdiy module

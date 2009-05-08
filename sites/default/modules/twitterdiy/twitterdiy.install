@@ -1,0 +1,20 @@
+<?php
+// $Id$
+
+/**
+ * Implementation of hook_install().
+ */
+function twitterdiy_install() {
+  // Set default 
+  variable_set('pathauto_node_tweet_pattern','[author-name-raw]/[yyyy]/[mm]/[title-raw]');
+  variable_set('pathauto_user_pattern', '[user-raw]');
+
+  // Install schema
+}
+
+function twitterdiy_schema() {
+  return array(
+    'twitterdiy_mention' => array(
+    ),
+  );
+}

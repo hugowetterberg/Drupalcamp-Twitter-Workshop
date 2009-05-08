@@ -1,0 +1,6 @@
+; $Id$
+name = Twitter DIY
+description = Drupalcamp workshop module
+dependencies[] = autoload
+core = "6.x"
+php = "5.2"

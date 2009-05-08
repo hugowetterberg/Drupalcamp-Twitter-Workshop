@@ -1,0 +1,64 @@
+<?php
+// $Id$
+
+/**
+ * Implementation of hook_node_info().
+ */
+function twitterdiy_node_info() {
+  return array(
+    'tweet' => array(
+      'name' => 'Tweet',
+      'module' => 'twitterdiy',
+      'title_label' => t('Tweet'),
+      'body_label' => t('Tweet body'),
+      'has_body' => FALSE,
+      'description' => t('A tweet from a user'),
+    ),
+  );
+}
+
+/**
+ * Implementation of hook_perm().
+ */
+function twitterdiy_perm() {
+  return array('twitterdiy post tweet');
+}
+
+/**
+ * Implementation of hook_form().
+ */
+function twitterdiy_form(&$node) {
+  $type = node_get_types('type', $node);
+  $form = array();
+
+  $form['title'] = array(
+    '#type' => 'textfield',
+    '#title' => check_plain($type->title_label),
+    '#required' => TRUE,
+    '#default_value' => $node->title,
+    '#weight' => -5
+  );
+
+  return $form;
+}
+
+/**
+ * Implementation of hook_form().
+ */
+function twitterdiy_insert() {
+  
+}
+
+/**
+ * Implementation of hook_form().
+ */
+function twitterdiy_update() {
+  
+}
+
+/**
+ * Implementation of hook_form().
+ */
+function twitterdiy_delete() {
+  
+}
