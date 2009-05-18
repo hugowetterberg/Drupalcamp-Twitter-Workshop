@@ -18,10 +18,93 @@ function twitterdiy_node_info() {
 }
 
 /**
+ * Implementation of hook_block().
+ */
+function twitterdiy_block($op = 'list', $delta = 0, $edit = array()) {
+  switch ($op) {
+    // List our blocks
+    case 'list':
+      $blocks = array();
+      $blocks['update'] = array(
+        'info' => t('Tweet'),
+        'cache' => BLOCK_NO_CACHE,
+      );
+      return $blocks;
+    break;
+    // View the block
+    case 'view':
+      $block = array();
+      switch ($delta) {
+        case 'update':
+          $block['subject'] = t('Tweet');
+          if (user_access('twitterdiy post tweet')) {
+            $block['content'] = drupal_get_form('twitterdiy_tweet_form');
+          }
+        break;
+      }
+      return $block;
+    break;
+  }
+}
+
+function twitterdiy_tweet_form() {
+  $form = array();
+
+  $form['tweet'] = array(
+    '#type' => 'textfield',
+    '#required' => TRUE,
+    '#default_value' => $node->title,
+    '#weight' => -5,
+    '#maxlength' => 140,
+  );
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#default_value' => t('Update'),
+  );
+
+  return $form;
+}
+
+function twitterdiy_form_alter($form, $form_state, $form_id) {
+  if ($form_id == 'tweet_node_form') {
+    $form['taxonomy']['tags'][2]['#access'] = FALSE;
+    $form['taxonomy']['tags'][1]['#access'] = FALSE;
+  }
+}
+
+function twitterdiy_tweet_form_submit($form, $form_state) {
+  global $user;
+  $values = $form_state['values'];
+  $node = (object)array(
+    'title' => $values['tweet'],
+    'type' => 'tweet',
+    'uid' => $user->uid,
+  );
+  node_save($node);
+}
+
+/**
  * Implementation of hook_perm().
  */
 function twitterdiy_perm() {
   return array('twitterdiy post tweet');
+}
+
+function twitterdiy_access($op, $node, $account) {
+  if ($op == 'create') {
+    return user_access('twitterdiy post tweet', $account);
+  }
+
+  if ($op == 'view') {
+    return user_access('access content', $account);
+  }
+
+  if ($op == 'update' || $op == 'delete') {
+    if (user_access('twitterdiy post tweet', $account) && ($account->uid == $node->uid)) {
+      return TRUE;
+    }
+  }
 }
 
 /**
@@ -36,29 +119,44 @@ function twitterdiy_form(&$node) {
     '#title' => check_plain($type->title_label),
     '#required' => TRUE,
     '#default_value' => $node->title,
-    '#weight' => -5
+    '#weight' => -5,
+    '#maxlength' => 140,
   );
 
   return $form;
 }
 
 /**
- * Implementation of hook_form().
+ * Implementation of hook_insert().
  */
-function twitterdiy_insert() {
-  
+function twitterdiy_insert(&$node) {
+  _twitterdiy_parse_special_tags($node);
 }
 
 /**
- * Implementation of hook_form().
+ * Implementation of hook_update().
  */
-function twitterdiy_update() {
-  
+function twitterdiy_update(&$node) {
+  _twitterdiy_parse_special_tags($node);
 }
 
 /**
- * Implementation of hook_form().
+ * Implementation of hook_delete().
  */
-function twitterdiy_delete() {
-  
+function twitterdiy_delete(&$node) {
+}
+
+/**
+ * Helper function that finds hashtags and at-tags
+ */
+function _twitterdiy_parse_special_tags(&$node) {
+  $matches = array();
+  if (preg_match_all('/#([a-z]+)/', $node->title, $matches)) {
+    $htags = join($matches[1], ', ');
+    $node->taxonomy['tags'][1] = $htags;
+  }
+  if (preg_match_all('/\@([a-z]+)/', $node->title, $matches)) {
+    $attags = join($matches[1], ', ');
+    $node->taxonomy['tags'][2] = $attags;
+  }
 }
