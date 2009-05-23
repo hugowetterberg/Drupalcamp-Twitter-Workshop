@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="334" height="400" creationComplete="created()">
+	<mx:LinkButton x="10" y="10" label="Click here to start authorization" width="296" id="authLink"/>
+	<mx:Button label="Update" width="78" right="26" top="10" id="btnUpdate" visible="false"/>
+	<mx:TextArea height="56" right="112" left="10" top="11" id="txtTweet" visible="false"/>
+	<mx:VBox y="75" right="26" left="10" id="tweetContainer"></mx:VBox>
+	<mx:Script>
+		<![CDATA[
+			import se.goodold.drupal.RestEvent;
+			import se.goodold.drupal.Rest;
+			import org.iotashan.oauth.OAuthToken;
+			import org.iotashan.oauth.OAuthConsumer;
+			import mx.controls.Text;
+			import mx.controls.Label;
+			
+			private var consumer:OAuthConsumer = new OAuthConsumer('tLhyrTovT3sBCWPM3S8KVuxWhCoyaFc5', 'GTdor8nidxxd4K3ffP3votuUVTZV2uYm');
+			private var rest:Rest = null;
+			
+			private function created():void {
+				rest = new Rest('http://dkws.local/', this.consumer, null);
+				rest.addEventListener(RestEvent.GOT_REQUEST_TOKEN, gotRequestToken);
+				rest.addEventListener(RestEvent.GOT_ACCESS_TOKEN, gotAccessToken);
+				
+				btnUpdate.addEventListener(MouseEvent.CLICK, updateClicked);
+				authLink.addEventListener(MouseEvent.CLICK, startAuth);
+			}
+			
+			private function updateClicked(evt:MouseEvent):void {
+				var t:Text = new Text();
+				t.text = txtTweet.text;
+				t.width = 300;
+				tweetContainer.addChildAt(t, 0);
+				
+				rest.postRequest(updatePosted, 'services/rest/tweet', {
+					'tweet': t.text
+				});
+			}
+			
+			private function gotRequestToken(event:Event):void {
+				authLink.enabled = true;
+				authLink.label = 'Click here when you\'ve authorized the app';
+			}
+			
+			private function gotAccessToken(event:Event):void {
+				authLink.visible = false;
+				txtTweet.visible = true;
+				btnUpdate.visible = true;
+			}
+			
+			private function updatePosted(result:Object):void {
+				
+			}
+			
+			private function startAuth(evt:MouseEvent):void {
+				authLink.enabled = false;
+				if (rest.hasRequestToken()) {
+					rest.getAccessToken();
+				}
+				else {
+					rest.getRequestToken();
+				}
+			}
+		]]>
+	</mx:Script>
+</mx:WindowedApplication>
