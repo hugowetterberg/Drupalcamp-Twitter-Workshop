@@ -45,6 +45,19 @@
 				authLink.visible = false;
 				txtTweet.visible = true;
 				btnUpdate.visible = true;
+				rest.getRequest(gotTweets, 'services/rest/tweet', {
+					'fields': 'nid,title,uid,created'
+				});
+			}
+			
+			private function gotTweets(tweets:Array):void {
+				var tc:int = tweets.length;
+				for (var i:int=0; i<tc; i++) {
+					var t:Text = new Text();
+					t.text = tweets[i].title;
+					t.width = 300;
+					tweetContainer.addChild(t);
+				}
 			}
 			
 			private function updatePosted(result:Object):void {
